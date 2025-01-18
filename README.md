@@ -1,23 +1,19 @@
-# [![todo.txt-cli](http://todotxt.org/images/todotxt_logo_2012.png)][website]
+# My TODO CLI app
 
-> A simple and extensible shell script for managing your todo.txt file.
+After trying many TODO apps, I always ended up using a plain and simple .txt file in my desktop. It was messy, but it was simple and fast.
 
-![CI](https://github.com/todotxt/todo.txt-cli/workflows/CI/badge.svg)
-[![GitHub issues](https://img.shields.io/github/issues/todotxt/todo.txt-cli.svg)](https://github.com/todotxt/todo.txt-cli/issues)
-[![GitHub forks](https://img.shields.io/github/forks/todotxt/todo.txt-cli.svg)](https://github.com/todotxt/todo.txt-cli/network)
-[![GitHub stars](https://img.shields.io/github/stars/todotxt/todo.txt-cli.svg)](https://github.com/todotxt/todo.txt-cli/stargazers)
-[![GitHub license](https://img.shields.io/github/license/todotxt/todo.txt-cli.svg)](https://raw.githubusercontent.com/todotxt/todo.txt-cli/master/LICENSE)
-[![Gitter](https://badges.gitter.im/join_chat.svg)](https://gitter.im/todotxt/todo.txt-cli)
+Then, one day I found out the [Todo.txt project](http://todotxt.org/) which aims to provide a simple and extensible format for storing tasks in a simple text file. To manage this file, there are many apps available, some meant directly for the command line, others include a web interface, or even plugins for popular editors.
 
-![gif](./.github/example.gif)
+I wanted something simple, so I started from their [todo.txt-cli](https://github.com/todotxt/todo.txt-cli) implementation and customized it a bit to my needs.
 
-*Read our [contributing guide][CONTRIBUTING] if you're looking to contribute (issues/PRs/etc).*
-
+Here you can find the instructions to install and use it as you wish.
 
 ## Installation
 
+These are the default instructions that come with the original project. I haven't tried them myself in distributions other than Ubuntu, so I can't guarantee they will work.
+
 ### Download
-Download the latest stable [release][release] for use on your desktop or server.
+Download the code in this repo.
 
 ### OS X / macOS
 
@@ -46,8 +42,8 @@ make test
 - `BASH_COMPLETION`: PATH for autocompletion scripts (default to `/usr/local/share/bash-completion/completions`)
 
 ```shell
-# Note: Showcasing config overrides for legacy locations; NOT recommended!
-make install CONFIG_DIR=/etc INSTALL_DIR=/usr/bin BASH_COMPLETION=/etc/bash_completion.d
+# Note: This is how I configured my installation
+make install CONFIG_DIR=~/.todo INSTALL_DIR=~/.local/bin
 ```
 
 #### Arch Linux (AUR)
@@ -57,65 +53,63 @@ https://aur.archlinux.org/packages/todotxt/
 
 ## Configuration
 
-No configuration is required; however, most users tweak the default settings (e.g. relocating the todo.txt directory to a subdirectory of the user's home directory, or onto a cloud drive (via the `TODO_DIR` variable)), modify the colors, add additional highlighting of projects, contexts, dates, and so on. A configuration template with a commented-out list of all available options is included.
-It is recommended to _copy_ that template into one of the locations listed by `todo.sh help` on `-d CONFIG_FILE`, even if it is installed in the global configuration location (`/etc/todo/config`).
+I have adapted the original configuration file to my needs. You can find it in the `customization` directory in this repo. You should copy it to your configuration directory, which in my case is `~/.todo`.
+
+```shell
+cp customization/config ~/.todo/config
+```
+
+I have also created my own sorting function (see [Usage](#usage)). It should be copied into the `~/.todo/actions` directory.
+
+```shell
+cp customization/custom_sort_table ~/.todo/actions/custom_sort_table
+```
+
+Lastly, add this line to your `.bashrc`file,
+
+```shell
+export TODOTXT_DEFAULT_ACTION="custom_sort_table"
+```
+
+and this line to your `.bash_aliases` file.
+
+```shell
+alias todo='todo.sh'
+```
 
 ## Usage
-```shell
-todo.sh [-fhpantvV] [-d todo_config] action [task_number] [task_description]
+
+The default commands are listed in the [USAGE][USAGE] file. With my customizations the workflow is as follows:
+
+1. Add a task with `todo.sh add "(X) TASK_DESCRIPTION +project @context due:YYYY-MM-DD"`. The order of the tags is not important, but the due date should be in the format `YYYY-MM-DD`.
+
+2. List tasks simply with `todo`. This will list all tasks sorted using my customized priorty list:
+- First, those tasks that are due in less than 2 days, marked in red.
+- Second, tasks organized by priority, from A to Z, marked in yellow. The priority is simply a letter in parenthesis at the beginning of the task.
+- Third, tasks with a due date, marked in green.
+- Lastly, tasks without a due date, marked in white.
+
+```ansi
+# Example output from `todo`:
+^[[1;34m ID   Pri.  Due Date    Project              Description                             ^[[0m
+^[[1;34m ---- ----  ----------  -----------          ----------------------------------------^[[0m
+^[[1;31m 03         2025-01-19                       This is a task due within 2 days        ^[[0m
+^[[1;31m 05         2025-01-19  teaching             This task includes a +project tag       ^[[0m
+^[[1;33m 01   (A)                                    This is the task with highest priority  ^[[0m
+^[[1;33m 02   (Y)                                    This one has less priority              ^[[0m
+^[[0;32m 04         2025-01-27  reading              Due date but not within 2 days          ^[[0m
+^[[0;37m 06                                          Task without priority or date           ^[[0m
+^[[0;37m 07                     another_project      This one includes a project             ^[[0m
 ```
 
-For example, to add a todo item, you can do:
 
-```shell
-todo.sh add "THING I NEED TO DO +project @context"
-```
-### `replace`
-Replaces task on line NR with UPDATED TODO.
+3. To reprioritize a task, simply use `todo pri NR PRIORITY`. For instance, to set the priority of task 1 to `Z`, use `todo pri 1 Z`.
 
-```shell
-todo.sh replace NR "UPDATED TODO"
-```
-### `report`
-Adds the number of open tasks and done tasks to report.txt.
-
-```shell
-todo.sh report
-```
-
-Read about all the possible commands in the [USAGE][USAGE] file.
-
-
-## Release History
-
-See [CHANGELOG.md][CHANGELOG]
-
-
-## Support
-
-- [Github Discussions](https://github.com/todotxt/todo.txt-cli/discussions)
-- [Stack Overflow](https://stackoverflow.com/questions/tagged/todotxt)
-- [Twitter](https://twitter.com/todotxt)
-
-
-## Code of Conduct
-
-[Contributor Code of Conduct][CODE_OF_CONDUCT]. By participating in this project you agree to abide by its terms.
-
-## Contributing
-
-We welcome all contributions. First read our [Contributor Code of Conduct][CODE_OF_CONDUCT] and then get started [contributing][CONTRIBUTING].
+4. To mark a task as done, use `todo do NR`. This will mark the task as done and move it to the `done.txt` file. For instance, to mark task 1 as done, use `todo do 1`.
 
 ## License
 
 GNU General Public License v3.0 © [todo.txt org][github]
 
-
-
-[release]: https://github.com/todotxt/todo.txt-cli/releases
-[website]: http://todotxt.org/
 [github]: https://github.com/todotxt
 [USAGE]: ./USAGE.md
-[CHANGELOG]: ./CHANGELOG.md
-[CODE_OF_CONDUCT]: .github/CODE_OF_CONDUCT.md
-[CONTRIBUTING]: .github/CONTRIBUTING.md
