@@ -108,9 +108,9 @@ For instance, to set the priority of task 1 to `Z`, use `todo pri 1 Z`.
 todo replace NR "UPDATED TASK"
 ```
 
-Tis will change the whole task to the new one. There are other commands to edit tasks, such as `append` or `prepend`. But since I don't usually edit the tasks I just forget the commands, so whenever I need I simply open the `todo.txt` file in my text editor and edit it directly.
+This will change the whole task to the new one. There are other commands to edit tasks, such as `append` or `prepend`. But since I don't usually edit the tasks I just forget the commands, so whenever I need I simply open the `todo.txt` file in my text editor and edit it directly.
 
-4. To mark a task as done, use
+5. To mark a task as done, use
 ```shell
 todo do NR
 ```
