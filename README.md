@@ -81,31 +81,41 @@ alias todo='todo.sh'
 
 The default commands are listed in the [USAGE][USAGE] file. With my customizations the workflow is as follows:
 
-1. Add a task with `todo.sh add "(X) TASK_DESCRIPTION +project @context due:YYYY-MM-DD"`. The order of the tags is not important, but the due date should be in the format `YYYY-MM-DD`.
+1. Add a task with
+```shell
+ todo add "(X) TASK_DESCRIPTION +project @context due:YYYY-MM-DD"
+ ```
+ 
+ The order of the tags is not important, but the due date should be in the format `YYYY-MM-DD`.
 
 2. List tasks simply with `todo`. This will list all tasks sorted using my customized priorty list:
 - First, those tasks that are due in less than 2 days, marked in red.
-- Second, tasks organized by priority, from A to Z, marked in yellow. The priority is simply a letter in parenthesis at the beginning of the task.
+- Second, tasks sorted by priority, from A to Z, marked in yellow. The priority is simply a letter in parenthesis at the beginning of the task.
 - Third, tasks with a due date, marked in green.
-- Lastly, tasks without a due date, marked in white.
+- Lastly, tasks without a due date, marked in white, sorted in alphabetic order.
 
-```ansi
-# Example output from `todo`:
-^[[1;34m ID   Pri.  Due Date    Project              Description                             ^[[0m
-^[[1;34m ---- ----  ----------  -----------          ----------------------------------------^[[0m
-^[[1;31m 03         2025-01-19                       This is a task due within 2 days        ^[[0m
-^[[1;31m 05         2025-01-19  teaching             This task includes a +project tag       ^[[0m
-^[[1;33m 01   (A)                                    This is the task with highest priority  ^[[0m
-^[[1;33m 02   (Y)                                    This one has less priority              ^[[0m
-^[[0;32m 04         2025-01-27  reading              Due date but not within 2 days          ^[[0m
-^[[0;37m 06                                          Task without priority or date           ^[[0m
-^[[0;37m 07                     another_project      This one includes a project             ^[[0m
+![Todo Example](./example.png)
+
+3. To reprioritize a task, simply use 
+```shell
+todo pri NR PRIORITY
 ```
 
+For instance, to set the priority of task 1 to `Z`, use `todo pri 1 Z`.
 
-3. To reprioritize a task, simply use `todo pri NR PRIORITY`. For instance, to set the priority of task 1 to `Z`, use `todo pri 1 Z`.
+4. Todo edit a task, you can use the replace command
+```shell
+todo replace NR "UPDATED TASK"
+```
 
-4. To mark a task as done, use `todo do NR`. This will mark the task as done and move it to the `done.txt` file. For instance, to mark task 1 as done, use `todo do 1`.
+Tis will change the whole task to the new one. There are other commands to edit tasks, such as `append` or `prepend`. But since I don't usually edit the tasks I just forget the commands, so whenever I need I simply open the `todo.txt` file in my text editor and edit it directly.
+
+4. To mark a task as done, use
+```shell
+todo do NR
+```
+
+For instance, to mark the task 1 as done, use `todo do 1`. This will mark the task as done, remove it from the `todo.txt` file and move it to the `done.txt` file.
 
 ## License
 
